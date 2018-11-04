@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+  php-fpm:
+    build:
+      context: ./php-fpm
+    volumes:
+      - ../demo:/var/www
+    user: ${LOCAL_USER}
+
+  nginx:
+    build:
+      context: ./nginx
+    volumes:
+      - ../demo:/var/www
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites/:/etc/nginx/sites-available
+      - ./nginx/conf.d/:/etc/nginx/conf.d
+      - ./nginx/log/:/var/log/nginx
+    ports:
+    - "80:80"
+    - "443:443"
+
+    links:
+      - php-fpm:php-fpm
+
+    depends_on:
+      - php-fpm
